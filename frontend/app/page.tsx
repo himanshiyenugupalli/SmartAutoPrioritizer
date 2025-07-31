@@ -13,11 +13,20 @@ import { SettingsPage } from "@/components/settings-page"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { ProfilePage } from "@/components/profile-page"
 
-export default function Home({ searchParams }: { searchParams: { tab?: string } }) {
+export default function Home({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const currentTab = searchParams.tab || "dashboard"
+  const [currentTab, setCurrentTab] = useState("dashboard")
+  
+  useEffect(() => {
+    const getSearchParams = async () => {
+      const params = await searchParams
+      setCurrentTab(params.tab || "dashboard")
+    }
+    
+    getSearchParams();
+  }, [searchParams])
 
   useEffect(() => {
     const checkAuth = () => {
